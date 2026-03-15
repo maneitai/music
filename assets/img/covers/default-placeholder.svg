@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-label="Default cover art">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#5b7cff" />
+      <stop offset="100%" stop-color="#1f314f" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" rx="110" fill="#040812" />
+  <rect x="42" y="42" width="1116" height="1116" rx="84" fill="url(#g)" opacity="0.25" />
+  <circle cx="860" cy="320" r="190" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="8" />
+  <circle cx="860" cy="320" r="110" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6" />
+  <text x="110" y="230" fill="rgba(255,255,255,0.72)" font-size="42" font-family="Arial, Helvetica, sans-serif" letter-spacing="8">MANEIT</text>
+  <text x="110" y="930" fill="#f4f7ff" font-size="120" font-weight="700" font-family="Arial, Helvetica, sans-serif">M</text>
+  <text x="110" y="1035" fill="rgba(255,255,255,0.86)" font-size="56" font-family="Arial, Helvetica, sans-serif">Pick a release</text>
+</svg>

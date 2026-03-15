@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Maneit Music</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070a0f">
+  <meta name="description" content="Maneit Music — your own listening room for releases, lyrics, and studio playback.">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-kicker">Maneit</span>
+        <strong class="brand-title">Music</strong>
+      </div>
+
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-link" href="#library" data-nav="library" data-active="true">Library</a>
+        <a class="nav-link" href="#genres" data-nav="genres">Genres</a>
+        <button class="nav-link" type="button" id="openStudioNav">Studio</button>
+      </nav>
+
+      <div class="header-tools">
+        <label class="select-pill" for="sortSelect">
+          Sort
+          <select id="sortSelect" aria-label="Sort releases">
+            <option value="featured">Featured</option>
+            <option value="newest">Newest</option>
+            <option value="year">Year</option>
+            <option value="title">Title</option>
+          </select>
+        </label>
+
+        <button class="toolbar-pill" type="button" id="immersiveNav">Immersive</button>
+      </div>
+    </header>
+
+    <main class="page" id="library">
+      <section class="hero hero--welcome">
+        <div class="hero-copy">
+          <span class="panel-label">Welcome</span>
+          <h1>Welcome back.</h1>
+          <p>
+            Start with a release. Everything else can stay out of the way until you want it.
+          </p>
+        </div>
+      </section>
+
+      <section id="genres">
+        <div class="section-heading">
+          <div>
+            <span class="panel-label">Browse</span>
+            <h2>Genres</h2>
+            <p>Start with the mood you are in.</p>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <div class="genre-strip" id="genreStrip"></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">
+          <div>
+            <span class="panel-label">Library</span>
+            <h2 id="libraryHeading">All releases</h2>
+            <p id="librarySubheading">Albums, tapes, sketches, and loose singles.</p>
+          </div>
+        </div>
+
+        <div class="release-grid" id="releaseGrid" aria-live="polite"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <section class="overlay" id="releaseOverlay" aria-hidden="true">
+    <div class="release-dialog" role="dialog" aria-modal="true" aria-labelledby="releaseDialogTitle">
+      <div class="release-dialog-header">
+        <div class="release-dialog-title">
+          <span class="panel-label">Release page</span>
+          <h2 id="releaseDialogTitle">Release</h2>
+          <div class="release-dialog-subtitle" id="releaseDialogSubtitle"></div>
+        </div>
+        <button type="button" id="closeReleaseOverlay">Close</button>
+      </div>
+
+      <div class="release-dialog-body" id="releaseDialogBody"></div>
+    </div>
+  </section>
+
+  <section class="panel-stack" id="panelStack" aria-hidden="true">
+    <div class="panel-chrome">
+      <div class="panel-tabs">
+        <button class="panel-tab" data-panel-tab="lyrics" aria-selected="true" type="button">Lyrics</button>
+        <button class="panel-tab" data-panel-tab="queue" aria-selected="false" type="button">Queue</button>
+        <button class="panel-tab" data-panel-tab="visualizer" aria-selected="false" type="button">Visualizer</button>
+        <button class="panel-tab" data-panel-tab="studio" aria-selected="false" type="button">Studio</button>
+        <button class="panel-tab" id="closePanelStack" type="button">Hide panel</button>
+      </div>
+
+      <div class="panel-content">
+        <section class="panel-view is-active" data-panel-view="lyrics">
+          <div class="lyrics-card">
+            <div class="lyrics-header">
+              <div>
+                <span class="panel-label">Active lyrics</span>
+                <h3 id="lyricsHeading" style="margin: 4px 0 0; font-size: 20px;">Nothing playing yet</h3>
+              </div>
+              <button type="button" id="openImmersiveFromLyrics">Open immersive</button>
+            </div>
+            <div class="lyrics-copy" id="lyricsPanel"></div>
+          </div>
+        </section>
+
+        <section class="panel-view" data-panel-view="queue">
+          <div>
+            <div class="lyrics-header">
+              <div>
+                <span class="panel-label">Current queue</span>
+                <h3 style="margin: 4px 0 0; font-size: 20px;">Release order</h3>
+              </div>
+            </div>
+            <div class="queue-list" id="queuePanel"></div>
+          </div>
+        </section>
+
+        <section class="panel-view" data-panel-view="visualizer">
+          <div class="visualizer-wrap">
+            <div class="lyrics-header">
+              <div>
+                <span class="panel-label">Visualizer</span>
+                <h3 style="margin: 4px 0 0; font-size: 20px;">Retro-inspired playback motion</h3>
+              </div>
+              <div class="visualizer-modes">
+                <button class="control is-on" data-visualizer-mode="retro" type="button">Retro</button>
+                <button class="control" data-visualizer-mode="glass" type="button">Glass</button>
+              </div>
+            </div>
+            <p class="visualizer-hint" id="visualizerHint">
+              The visualizer becomes more expressive when Web Audio is available on the current host.
+            </p>
+            <canvas class="visualizer-canvas" id="visualizerCanvas" width="1200" height="600"></canvas>
+          </div>
+        </section>
+
+        <section class="panel-view" data-panel-view="studio">
+          <div class="studio-grid">
+            <div class="studio-topline">
+              <div>
+                <span class="panel-label">Studio layer</span>
+                <h3 style="margin: 4px 0 0; font-size: 20px;">Original EQ presets, improved layout</h3>
+              </div>
+
+              <div class="studio-actions">
+                <label class="select-pill" for="presetSelect">
+                  Preset
+                  <select id="presetSelect" aria-label="EQ preset"></select>
+                </label>
+                <button class="control" id="bassBoostBtn" type="button" aria-pressed="false">Bass boost</button>
+                <button class="control" id="eqEnableBtn" type="button" aria-pressed="true">EQ on</button>
+                <button class="control" id="eqResetBtn" type="button">Reset</button>
+              </div>
+            </div>
+
+            <div class="notice hidden" id="audioFxNotice"></div>
+
+            <canvas class="visualizer-canvas" id="studioVisualizerCanvas" width="1200" height="400"></canvas>
+
+            <div class="eq-grid" id="eqGrid"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <footer class="player" id="player">
+    <div class="player-shell">
+      <div class="player-grid">
+        <div>
+          <div class="now-playing">
+            <div class="player-cover">
+              <img id="playerCover" src="assets/img/covers/default-placeholder.svg" alt="">
+            </div>
+
+            <div class="player-trackline">
+              <div class="player-title" id="playerTitle">Pick a release to begin</div>
+              <div class="player-subtitle" id="playerSubtitle">Choose something you want to hear.</div>
+
+              <div class="seek-row">
+                <span class="timecode" id="timeNow">0:00</span>
+                <input class="player-progress" id="playerProgress" type="range" min="0" max="1000" step="1" value="0" aria-label="Seek within track">
+                <span class="timecode" id="timeTotal">0:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-actions">
+          <div class="transport-row">
+            <div class="transport-left">
+              <button class="control" id="prevBtn" type="button">Prev</button>
+              <button class="control primary" id="playPauseBtn" type="button">Play</button>
+              <button class="control" id="nextBtn" type="button">Next</button>
+              <button class="control" id="shuffleBtn" type="button" aria-pressed="false">Shuffle</button>
+              <button class="control" id="repeatBtn" type="button" data-repeat="off">Repeat off</button>
+            </div>
+
+            <div class="transport-right">
+              <button class="control" id="lyricsBtn" type="button">Lyrics</button>
+              <button class="control" id="queueBtn" type="button">Queue</button>
+              <button class="control" id="visualizerBtn" type="button">Visualizer</button>
+              <button class="control" id="studioBtn" type="button">Studio</button>
+            </div>
+          </div>
+
+          <div class="utility-row">
+            <div class="transport-left">
+              <label class="volume-wrap" for="volumeRange">
+                Volume
+                <input id="volumeRange" type="range" min="0" max="1" step="0.01" value="0.9" aria-label="Volume">
+              </label>
+            </div>
+
+            <div class="transport-right">
+              <a class="button player-download" id="trackDownloadBtn" href="#" download>Download track</a>
+              <button class="control" id="immersiveBtn" type="button">Immersive</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <audio id="audio" preload="metadata"></audio>
+    </div>
+  </footer>
+
+  <section class="immersive" id="immersiveOverlay" aria-hidden="true">
+    <div class="immersive-shell">
+      <div class="immersive-header">
+        <div class="immersive-header-main">
+          <div class="player-cover">
+            <img id="immersiveCover" src="assets/img/covers/default-placeholder.svg" alt="">
+          </div>
+          <div class="immersive-meta">
+            <strong id="immersiveTitle">No track loaded</strong>
+            <span id="immersiveSubtitle">Open a release and press play.</span>
+          </div>
+        </div>
+
+        <div class="immersive-controls">
+          <button class="control is-on" data-immersive-tab="lyrics" type="button">Lyrics</button>
+          <button class="control" data-immersive-tab="visualizer" type="button">Visualizer</button>
+          <button class="control" id="closeImmersiveBtn" type="button">Close</button>
+        </div>
+      </div>
+
+      <div class="immersive-body">
+        <div class="immersive-visual">
+          <div class="immersive-cover">
+            <img id="immersiveCoverLarge" src="assets/img/covers/default-placeholder.svg" alt="">
+          </div>
+          <canvas class="immersive-visualizer" id="immersiveVisualizerCanvas" width="1200" height="400"></canvas>
+        </div>
+
+        <div class="immersive-side">
+          <div class="immersive-tabs">
+            <button class="control is-on" data-immersive-tab="lyrics" type="button">Lyrics</button>
+            <button class="control" data-immersive-tab="visualizer" type="button">Visualizer</button>
+          </div>
+
+          <div class="immersive-panel">
+            <div id="immersiveLyricsPanel">
+              <div class="lyrics-copy" id="immersiveLyricsCopy"></div>
+            </div>
+            <div id="immersiveVisualizerPanel" class="hidden">
+              <canvas class="visualizer-canvas" id="immersiveFullscreenCanvas" width="1200" height="760"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
